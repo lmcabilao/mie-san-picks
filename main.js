@@ -38,6 +38,9 @@ function addProduct() {
   }).catch(() => alert("Failed to fetch product info."));
 }
 
+// Expose the addProduct function globally
+window.addProduct = addProduct;
+
 function editTitle(index, value) {
   products[index].title = value;
   localStorage.setItem("products", JSON.stringify(products));
