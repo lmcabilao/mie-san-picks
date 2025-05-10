@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mie-san Picks</title>
+  <script type="module" src="main.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-900 font-sans">
+  <div id="app" class="max-w-4xl mx-auto p-4">
+    <div class="text-center">
+      <img id="cover" src="banner.jpg" alt="Banner" class="w-full h-48 object-cover rounded-lg mb-4">
+      <div class="flex items-center justify-center gap-4">
+        <img id="profile" src="profile.jpg" alt="Profile" class="w-16 h-16 rounded-full border-2 border-white shadow">
+        <h1 class="text-2xl font-bold">Mie-san Picks</h1>
+      </div>
+    </div>
+
+    <div id="auth" class="mt-6 text-center">
+      <input id="access-code" type="password" placeholder="Enter secret code..." class="border p-2 rounded" />
+      <button onclick="login()" class="ml-2 bg-blue-500 text-white px-4 py-2 rounded">Login</button>
+    </div>
+
+    <div id="admin-panel" class="hidden mt-6 border-t pt-6">
+      <h2 class="text-xl font-semibold mb-2">Add Shopee Product</h2>
+      <input id="product-url" placeholder="Paste Shopee link..." class="border p-2 w-full rounded mb-2" />
+      <button onclick="addProduct()" class="bg-green-600 text-white px-4 py-2 rounded">Add Product</button>
+    </div>
+
+    <div id="products" class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+  </div>
+</body>
+</html>
