@@ -65,7 +65,7 @@ function editImg(index, value) {
 async function fetchShopeeMeta(affiliateUrl) {
   try {
     // Step 1: Resolve the Redirects from the Affiliate Link
-    const response = await fetch("https://corsproxy.io/?" + encodeURIComponent(affiliateUrl), {
+    const response = await fetch("https://proxy.cors.sh/" + encodeURIComponent(affiliateUrl), {
       redirect: "follow",
     });
     const finalUrl = response.url; // Resolved URL (actual product page)
