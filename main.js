@@ -64,17 +64,14 @@ function editImg(index, value) {
 
 async function fetchShopeeMeta(affiliateUrl) {
   try {
-    // Use AllOrigins CORS proxy to fetch the final URL's HTML
-    const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(affiliateUrl)}`, {
-      method: "GET",
-    });
+    // Attempt to fetch metadata using the affiliate URL
+    const response = await fetch(affiliateUrl, { redirect: "follow" });
 
     if (!response.ok) {
-      throw new Error("Failed to fetch metadata via proxy");
+      throw new Error("Failed to fetch metadata");
     }
 
-    const data = await response.json();
-    const html = data.contents;
+    const html = await response.text();
 
     // Extract metadata from HTML
     const titleMatch = html.match(/<title>(.*?)<\/title>/);
@@ -84,25 +81,11 @@ async function fetchShopeeMeta(affiliateUrl) {
     const img = imgMatch ? imgMatch[1] : "";
 
     return { title, img, affiliateUrl };
-  } catch (proxyError) {
-    console.error("Proxy metadata fetch failed. Falling back to AI:", proxyError);
+  } catch (error) {
+    console.error("Failed to fetch product metadata:", error);
 
-    // Fallback: Use AI to fetch metadata
-    try {
-      const aiResponse = await fetch(`https://api.example.com/ai-fetch-metadata?url=${encodeURIComponent(affiliateUrl)}`);
-      const aiData = await aiResponse.json();
-
-      if (aiData && aiData.title && aiData.img) {
-        return { title: aiData.title, img: aiData.img, affiliateUrl };
-      }
-
-      throw new Error("AI metadata fetch failed");
-    } catch (aiError) {
-      console.error("AI metadata fetch failed:", aiError);
-
-      // Final fallback: Default metadata
-      return { title: "Failed to fetch title", img: "./placeholder.png", affiliateUrl };
-    }
+    // Return placeholder data on failure
+    return { title: "Failed to fetch title", img: "./placeholder.png", affiliateUrl };
   }
 }
 
