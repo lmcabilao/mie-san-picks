@@ -2,7 +2,7 @@ const products = JSON.parse(localStorage.getItem("products") || "[]");
 
 function login() {
   const code = document.getElementById("access-code").value;
-  if (code === "mie-san-secret") {
+  if (code === "test") {
     document.getElementById("admin-panel").classList.remove("hidden");
   } else {
     alert("Incorrect access code.");
