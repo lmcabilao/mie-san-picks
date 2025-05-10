@@ -37,7 +37,7 @@ function addProduct() {
     localStorage.setItem("products", JSON.stringify(products));
     renderProducts();
     document.getElementById("product-url").value = ""; // Clear input field
-  }).catch(() => alert("Failed to fetch product info."));
+  }).catch(() => alert("Failed to fetch product info. Please check your link or try again later."));
 }
 
 // Expose the addProduct function globally
@@ -64,19 +64,45 @@ function editImg(index, value) {
 
 async function fetchShopeeMeta(affiliateUrl) {
   try {
-    // AI-based metadata fetching fallback
-    const metadata = await fetch(
-      `https://api.example.com/ai-fetch-metadata?url=${encodeURIComponent(affiliateUrl)}`
-    ).then(res => res.json());
+    // Use AllOrigins CORS proxy to fetch the final URL's HTML
+    const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(affiliateUrl)}`, {
+      method: "GET",
+    });
 
-    if (metadata && metadata.title && metadata.img) {
-      return { title: metadata.title, img: metadata.img, affiliateUrl };
+    if (!response.ok) {
+      throw new Error("Failed to fetch metadata via proxy");
     }
 
-    throw new Error("Failed to fetch metadata using AI");
-  } catch (error) {
-    console.error("Failed to resolve or fetch product metadata:", error);
-    return { title: "Failed to fetch title", img: "./placeholder.png", affiliateUrl };
+    const data = await response.json();
+    const html = data.contents;
+
+    // Extract metadata from HTML
+    const titleMatch = html.match(/<title>(.*?)<\/title>/);
+    const imgMatch = html.match(/<meta property="og:image" content="(.*?)"/);
+
+    const title = titleMatch ? titleMatch[1] : "Untitled";
+    const img = imgMatch ? imgMatch[1] : "";
+
+    return { title, img, affiliateUrl };
+  } catch (proxyError) {
+    console.error("Proxy metadata fetch failed. Falling back to AI:", proxyError);
+
+    // Fallback: Use AI to fetch metadata
+    try {
+      const aiResponse = await fetch(`https://api.example.com/ai-fetch-metadata?url=${encodeURIComponent(affiliateUrl)}`);
+      const aiData = await aiResponse.json();
+
+      if (aiData && aiData.title && aiData.img) {
+        return { title: aiData.title, img: aiData.img, affiliateUrl };
+      }
+
+      throw new Error("AI metadata fetch failed");
+    } catch (aiError) {
+      console.error("AI metadata fetch failed:", aiError);
+
+      // Final fallback: Default metadata
+      return { title: "Failed to fetch title", img: "./placeholder.png", affiliateUrl };
+    }
   }
 }
 
