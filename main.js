@@ -17,8 +17,9 @@ function renderProducts() {
   container.innerHTML = "";
   products.forEach((p, index) => {
     const card = document.createElement("div");
-    card.className = "bg-white shadow p-4 rounded";
+    card.className = "bg-white shadow p-4 rounded relative";
     card.innerHTML = `
+      <button onclick="removeProduct(${index})" class="absolute top-2 right-2 text-red-600">✖</button>
       <img src="${p.img}" alt="Product" class="h-40 object-contain w-full mb-2">
       <input value="${p.title}" onchange="editTitle(${index}, this.value)" class="w-full mb-2 p-1 border rounded" />
       <input value="${p.img}" onchange="editImg(${index}, this.value)" class="w-full mb-2 p-1 border rounded" />
@@ -31,7 +32,8 @@ function renderProducts() {
 function addProduct() {
   const url = document.getElementById("product-url").value;
   fetchShopeeMeta(url).then(meta => {
-    products.push({ url, title: meta.title, img: meta.img });
+    const newProduct = { url, title: meta.title, img: meta.img };
+    products.push(newProduct);
     localStorage.setItem("products", JSON.stringify(products));
     renderProducts();
     document.getElementById("product-url").value = "";
@@ -40,6 +42,15 @@ function addProduct() {
 
 // Expose the addProduct function globally
 window.addProduct = addProduct;
+
+function removeProduct(index) {
+  products.splice(index, 1);
+  localStorage.setItem("products", JSON.stringify(products));
+  renderProducts();
+}
+
+// Expose the removeProduct function globally
+window.removeProduct = removeProduct;
 
 function editTitle(index, value) {
   products[index].title = value;
