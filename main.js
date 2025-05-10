@@ -16,12 +16,12 @@ function renderProducts() {
   products.forEach((p, index) => {
     const card = document.createElement("div");
     card.className = "bg-white shadow p-4 rounded";
-    card.innerHTML = \`
-      <img src="\${p.img}" alt="Product" class="h-40 object-contain w-full mb-2">
-      <input value="\${p.title}" onchange="editTitle(\${index}, this.value)" class="w-full mb-2 p-1 border rounded" />
-      <input value="\${p.img}" onchange="editImg(\${index}, this.value)" class="w-full mb-2 p-1 border rounded" />
-      <a href="\${p.url}" target="_blank" class="text-blue-600">Open in Shopee</a>
-    \`;
+    card.innerHTML = `
+  <img src="${p.img}" alt="Product" class="h-40 object-contain w-full mb-2">
+  <input value="${p.title}" onchange="editTitle(${index}, this.value)" class="w-full mb-2 p-1 border rounded" />
+  <input value="${p.img}" onchange="editImg(${index}, this.value)" class="w-full mb-2 p-1 border rounded" />
+  <a href="${p.url}" target="_blank" class="text-blue-600">Open in Shopee</a>
+`;
     container.appendChild(card);
   });
 }
