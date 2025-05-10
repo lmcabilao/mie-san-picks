@@ -20,7 +20,7 @@ function renderProducts() {
     card.className = "bg-white shadow p-4 rounded relative";
     card.innerHTML = `
       <button onclick="removeProduct(${index})" class="absolute top-2 right-2 text-red-600">✖</button>
-      <img src="${p.img || 'https://via.placeholder.com/150'}" alt="Product" class="h-40 object-contain w-full mb-2">
+      <img src="${p.img || './placeholder.png'}" alt="Product" class="h-40 object-contain w-full mb-2">
       <input value="${p.title}" onchange="editTitle(${index}, this.value)" class="w-full mb-2 p-1 border rounded" />
       <input value="${p.img}" onchange="editImg(${index}, this.value)" class="w-full mb-2 p-1 border rounded" />
       <a href="${p.url}" target="_blank" class="text-blue-600">Open in Shopee</a>
@@ -64,27 +64,19 @@ function editImg(index, value) {
 
 async function fetchShopeeMeta(affiliateUrl) {
   try {
-    // Step 1: Resolve the Redirects from the Affiliate Link
-    const response = await fetch("https://proxy.cors.sh/" + encodeURIComponent(affiliateUrl), {
-      redirect: "follow",
-    });
-    const finalUrl = response.url; // Resolved URL (actual product page)
+    // AI-based metadata fetching fallback
+    const metadata = await fetch(
+      `https://api.example.com/ai-fetch-metadata?url=${encodeURIComponent(affiliateUrl)}`
+    ).then(res => res.json());
 
-    // Step 2: Fetch HTML Content from Final URL
-    const html = await response.text();
+    if (metadata && metadata.title && metadata.img) {
+      return { title: metadata.title, img: metadata.img, affiliateUrl };
+    }
 
-    // Step 3: Extract Metadata (Title and Image)
-    const titleMatch = html.match(/<title>(.*?)<\/title>/);
-    const imgMatch = html.match(/<meta property="og:image" content="(.*?)"/);
-
-    const title = titleMatch ? titleMatch[1] : "Untitled";
-    const img = imgMatch ? imgMatch[1] : "";
-
-    // Return metadata with the affiliate link
-    return { title, img, affiliateUrl };
+    throw new Error("Failed to fetch metadata using AI");
   } catch (error) {
     console.error("Failed to resolve or fetch product metadata:", error);
-    return { title: "Failed to fetch title", img: "", affiliateUrl };
+    return { title: "Failed to fetch title", img: "./placeholder.png", affiliateUrl };
   }
 }
 
